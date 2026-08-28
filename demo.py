@@ -1,7 +1,7 @@
 """Add documents to the RAG system one at a time and inspect what's produced.
 
-Current stage: chunking + embedding + vector store. Retrieval and generation
-are added later.
+Current stage: chunking + embedding + vector store + retrieval. Generation is
+added later.
 """
 
 import os
@@ -15,6 +15,7 @@ FILES_IN_ORDER = [
     "03_rag_systems.txt",
     "04_vector_databases.txt",
 ]
+SAMPLE_QUESTION = "How does a RAG system use vector similarity to retrieve relevant chunks?"
 
 
 def main():
@@ -36,6 +37,12 @@ def main():
             vector_preview = ", ".join(f"{v:.2f}" for v in entry["embedding"][:6])
             print(f"    chunk {i} ({len(entry['text'].split())} words): {preview}...")
             print(f"      embedding[{EMBEDDING_DIMS}] = [{vector_preview}, ...]")
+
+        print(f"\n  Query: {SAMPLE_QUESTION!r}")
+        for rank, (score, entry) in enumerate(store.search(SAMPLE_QUESTION, top_k=2), start=1):
+            preview = entry["text"][:100].replace("\n", " ")
+            print(f"    #{rank} score={score:.3f} source={entry['source']}")
+            print(f"        {preview}...")
 
 
 if __name__ == "__main__":

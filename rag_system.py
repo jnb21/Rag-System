@@ -1,6 +1,6 @@
 """RAG (Retrieval-Augmented Generation) system, built up step by step.
 
-Current stage: chunking + embedding + vector store.
+Current stage: chunking + embedding + vector store + retrieval.
 """
 
 import hashlib
@@ -80,3 +80,19 @@ class VectorStore:
 
     def __len__(self):
         return len(self.entries)
+
+    def search(self, query_text, top_k=3):
+        """Return the top_k entries whose embedding is closest to the query's."""
+        query_vector = embed_chunk(query_text)
+        scored = [
+            (_cosine_similarity(query_vector, entry["embedding"]), entry)
+            for entry in self.entries
+        ]
+        scored.sort(key=lambda pair: pair[0], reverse=True)
+        return scored[:top_k]
+
+
+def _cosine_similarity(vec_a, vec_b):
+    # embed_chunk() already returns unit-length vectors, so the dot product
+    # alone equals cosine similarity -- no need to divide by magnitudes.
+    return sum(a * b for a, b in zip(vec_a, vec_b))

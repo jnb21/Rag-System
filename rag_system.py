@@ -1,10 +1,11 @@
 """RAG (Retrieval-Augmented Generation) system, built up step by step.
 
-Current stage: chunking + embedding.
+Current stage: chunking + embedding + vector store.
 """
 
 import hashlib
 import math
+import os
 import re
 
 EMBEDDING_DIMS = 64
@@ -51,3 +52,31 @@ def embed_chunk(text, dims=EMBEDDING_DIMS):
     if norm == 0:
         return vector
     return [v / norm for v in vector]
+
+
+class VectorStore:
+    """In-memory store holding each chunk's text, source file, and embedding.
+
+    This is the layer a real system would swap for Pinecone, Weaviate,
+    Qdrant, or pgvector -- something that persists vectors to disk and can
+    search millions of them quickly. Here it's just a Python list, since the
+    goal is to see the shape of the data before adding search over it.
+    """
+
+    def __init__(self):
+        self.entries = []  # each: {"text": str, "source": str, "embedding": list[float]}
+
+    def add_document(self, path):
+        with open(path, "r", encoding="utf-8") as f:
+            text = f.read()
+        source = os.path.basename(path)
+
+        chunks = chunk_text(text)
+        for chunk in chunks:
+            self.entries.append(
+                {"text": chunk, "source": source, "embedding": embed_chunk(chunk)}
+            )
+        return len(chunks)
+
+    def __len__(self):
+        return len(self.entries)

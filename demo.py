@@ -1,11 +1,11 @@
-"""Add documents to the RAG system one at a time and inspect the chunks produced.
+"""Add documents to the RAG system one at a time and inspect what's produced.
 
-Current stage: chunking only. Retrieval and generation are added later.
+Current stage: chunking + embedding. Retrieval and generation are added later.
 """
 
 import os
 
-from rag_system import chunk_text
+from rag_system import EMBEDDING_DIMS, chunk_text, embed_chunk
 
 DATA_DIR = "data"
 FILES_IN_ORDER = [
@@ -30,13 +30,17 @@ def main():
 
         chunks = chunk_text(text)
         for chunk in chunks:
-            all_chunks.append({"text": chunk, "source": filename})
+            embedding = embed_chunk(chunk)
+            all_chunks.append({"text": chunk, "source": filename, "embedding": embedding})
 
         print(f"  + {len(chunks)} chunk(s) produced from this file")
         print(f"  + index now holds {len(all_chunks)} chunk(s) total")
         for i, chunk in enumerate(chunks, start=1):
-            preview = chunk[:100].replace("\n", " ")
+            preview = chunk[:80].replace("\n", " ")
+            embedding = all_chunks[len(all_chunks) - len(chunks) + i - 1]["embedding"]
+            vector_preview = ", ".join(f"{v:.2f}" for v in embedding[:6])
             print(f"    chunk {i} ({len(chunk.split())} words): {preview}...")
+            print(f"      embedding[{EMBEDDING_DIMS}] = [{vector_preview}, ...]")
 
 
 if __name__ == "__main__":

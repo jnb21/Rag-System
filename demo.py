@@ -1,12 +1,12 @@
 """Add documents to the RAG system one at a time and inspect what's produced.
 
-Current stage: chunking + embedding + vector store + retrieval. Generation is
-added later.
+Current stage: chunking + embedding + vector store + retrieval + generation.
+This is the complete pipeline.
 """
 
 import os
 
-from rag_system import EMBEDDING_DIMS, VectorStore
+from rag_system import EMBEDDING_DIMS, VectorStore, generate_answer
 
 DATA_DIR = "data"
 FILES_IN_ORDER = [
@@ -43,6 +43,16 @@ def main():
             preview = entry["text"][:100].replace("\n", " ")
             print(f"    #{rank} score={score:.3f} source={entry['source']}")
             print(f"        {preview}...")
+
+    print(f"\n{'=' * 70}")
+    print("FINAL: prompting + generation over the complete index")
+    print("=" * 70)
+    answer, results = generate_answer(store, SAMPLE_QUESTION, top_k=3)
+    print(f"\nQuestion: {SAMPLE_QUESTION}")
+    print(f"\nAnswer:\n{answer}")
+    print("\nSources used:")
+    for score, entry in results:
+        print(f"  - {entry['source']} (score={score:.3f})")
 
 
 if __name__ == "__main__":

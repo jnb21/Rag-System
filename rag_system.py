@@ -1,6 +1,6 @@
 """RAG (Retrieval-Augmented Generation) system, built up step by step.
 
-Current stage: chunking + embedding + vector store + retrieval.
+Current stage: chunking + embedding + vector store + retrieval + generation.
 """
 
 import hashlib
@@ -96,3 +96,47 @@ def _cosine_similarity(vec_a, vec_b):
     # embed_chunk() already returns unit-length vectors, so the dot product
     # alone equals cosine similarity -- no need to divide by magnitudes.
     return sum(a * b for a, b in zip(vec_a, vec_b))
+
+
+def build_prompt(question, results):
+    """Assemble the retrieved chunks and the question into a single LLM prompt."""
+    context = "\n\n".join(f"[{entry['source']}] {entry['text']}" for _, entry in results)
+    return (
+        "Answer the question using only the context below. "
+        "If the context does not contain the answer, say so.\n\n"
+        f"Context:\n{context}\n\nQuestion: {question}"
+    )
+
+
+def generate_answer(store, question, top_k=3):
+    """Retrieve relevant chunks, prompt an LLM with them, and return the answer."""
+    results = store.search(question, top_k=top_k)
+    if not results:
+        return "No indexed content is relevant to that question yet.", results
+
+    prompt = build_prompt(question, results)
+    answer = _call_llm(prompt)
+    if answer is None:
+        answer = (
+            "(extractive fallback, no ANTHROPIC_API_KEY set) "
+            "Most relevant passage: " + results[0][1]["text"]
+        )
+    return answer, results
+
+
+def _call_llm(prompt):
+    """Call Claude with the assembled prompt, or return None if not configured."""
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return None
+    try:
+        import anthropic
+    except ImportError:
+        return None
+
+    client = anthropic.Anthropic()
+    response = client.messages.create(
+        model="claude-sonnet-5",
+        max_tokens=300,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return response.content[0].text

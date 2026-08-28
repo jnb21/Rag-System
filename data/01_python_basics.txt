@@ -1,0 +1,19 @@
+Python Basics
+
+Python is a high-level, interpreted programming language known for its readable syntax and gentle
+learning curve. It was created by Guido van Rossum and first released in 1991. Python emphasizes
+code readability, using indentation to define blocks instead of curly braces.
+
+Python supports multiple programming paradigms, including procedural, object-oriented, and
+functional programming. Common data types include integers, floats, strings, lists, tuples,
+dictionaries, and sets. Variables in Python are dynamically typed, meaning you do not need to
+declare a type before assigning a value.
+
+Python has a large standard library and an enormous ecosystem of third-party packages available
+through pip and the Python Package Index (PyPI). Popular use cases include web development with
+frameworks like Django and Flask, data analysis with pandas, scientific computing with NumPy and
+SciPy, and machine learning with libraries such as scikit-learn, PyTorch, and TensorFlow.
+
+Because it is easy to read and quick to prototype in, Python is often the language of choice for
+building small tools, automation scripts, and proof-of-concept systems before scaling to more
+performance-critical languages.

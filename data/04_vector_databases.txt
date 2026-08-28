@@ -1,0 +1,23 @@
+Vector Databases
+
+A vector database is a storage system designed to hold high-dimensional vectors, such as the
+embeddings produced by a machine learning model, and to search for the vectors most similar to a
+given query vector. This kind of search is called a nearest-neighbor search, and it is the core
+operation behind retrieval in a RAG pipeline.
+
+Similarity between vectors is usually measured with cosine similarity, which compares the angle
+between two vectors rather than their magnitude, or with Euclidean distance, which measures
+straight-line distance between points. Cosine similarity is especially common for text embeddings
+because it focuses on direction, meaning documents about the same topic point in a similar
+direction in the embedding space regardless of length.
+
+Searching every stored vector one by one, known as a brute-force or flat search, becomes slow as a
+collection grows into the millions of entries. To make search fast at scale, vector databases use
+approximate nearest-neighbor algorithms and index structures such as HNSW (Hierarchical Navigable
+Small World graphs) or IVF (Inverted File Index), which trade a small amount of accuracy for a
+large gain in speed.
+
+Popular vector database options include specialized systems such as Pinecone, Weaviate, Milvus,
+and Qdrant, as well as vector search extensions added to existing databases like PostgreSQL
+(pgvector) and Elasticsearch. For small projects or prototypes, an in-memory index is often
+sufficient and avoids the operational overhead of running a dedicated database.

@@ -1,0 +1,22 @@
+Machine Learning Basics
+
+Machine learning is a field of artificial intelligence in which systems learn patterns from data
+rather than following explicitly programmed rules. A model is trained on a dataset, adjusting
+internal parameters to minimize the difference between its predictions and the correct answers.
+
+There are three broad categories of machine learning. Supervised learning trains a model on
+labeled examples, such as predicting house prices from features like square footage and location.
+Unsupervised learning finds structure in unlabeled data, such as grouping customers into clusters
+based on purchasing behavior. Reinforcement learning trains an agent to take actions in an
+environment to maximize a reward signal over time.
+
+A key concept that connects classical machine learning to modern natural language systems is the
+embedding: a way of representing an object, such as a word, sentence, or document, as a vector of
+numbers in a high-dimensional space. Objects with similar meaning end up close together in that
+space, which makes it possible to compare them mathematically using measures like cosine
+similarity.
+
+Large language models are trained on massive text corpora and can generate fluent text, answer
+questions, and perform reasoning tasks. However, they only know what was in their training data
+and can produce incorrect or outdated information, which is one of the motivations for combining
+them with external retrieval systems.

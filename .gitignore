@@ -3,3 +3,7 @@ target/
 node_modules/
 .DS_Store
 Notes.md
+
+venv/
+.env
+__pycache__/
